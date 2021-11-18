@@ -57,7 +57,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
         - name: vote-frontend
-          image: michaeljacinto/3495frontend:latest
+          image: michaeljacinto/voting_app:latest
           ports:
             - containerPort: 80
           resources:

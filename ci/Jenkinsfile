@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh "echo 'Build success'"
+            }
+        }
+        stage('Test') {
+            steps {
+                sh "echo 'Test success'"
+            }
+        }
+        stage('Authenticate') {
+            steps {
+                    withCredentials([
+                        string(credentialsId: 'AzureTenantID', variable: 'TENANT_ID'),
+                        usernamePassword(credentialsId: 'ACRCredentials', usernameVariable: 'ACR_USERNAME', passwordVariable: 'ACR_PASSWORD'),
+                        usernamePassword(credentialsId: 'AzServicePrincipal', usernameVariable: 'APP_ID', passwordVariable: 'APP_SECRET')
+                ]) {
+                    sh "az login --service-principal -u $APP_ID -p $APP_SECRET --tenant $TENANT_ID"
+                }
+            }
+        }
+        stage('Package') {
+            steps {
+                    withCredentials([
+                        string(credentialsId: 'ACRToken', variable: 'ACR_TOKEN'),
+                        string(credentialsId: 'ACRRepo', variable: 'ACR_REPO'),
+                        usernamePassword(credentialsId: 'ACRCredentials', usernameVariable: 'ACR_USERNAME', passwordVariable: 'ACR_PASSWORD')
+                ])
+                {
+                    sh "docker login $ACR_REPO --username $ACR_USERNAME --password $ACR_PASSWORD"
+                    sh "docker build -t frontend:${env.BUILD_NUMBER} -f ./azure-vote/Dockerfile ."
+                    sh "docker tag frontend:${env.BUILD_NUMBER} $ACR_REPO/frontend:${env.BUILD_NUMBER}"
+                    sh "docker push $ACR_REPO/frontend:${env.BUILD_NUMBER}"
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                    withCredentials([
+                        string(credentialsId: 'AKSName', variable: 'AKS_NAME'),
+                        string(credentialsId: 'ResourceGroupName', variable: 'RG_NAME'),
+                        string(credentialsId: 'ACRRepo', variable: 'ACR_REPO')
+                ])
+                {
+                    sh "az aks get-credentials --resource-group $RG_NAME --name $AKSName"
+                    sh "kubectl set image deployment.apps/vote-frontend vote-frontend=$ACR_REPO/frontend:${env.BUILD_NUMBER}"
+                }
+            }
+        }
+    }
+}
