@@ -45,7 +45,7 @@ pipeline {
                         string(credentialsId: 'ACRRepo', variable: 'ACR_REPO')
                 ])
                 {
-                    sh "az aks get-credentials --resource-group $RG_NAME --name $AKSName"
+                    sh "az aks get-credentials --resource-group $RG_NAME --name $AKS_NAME"
                     sh "kubectl set image deployment.apps/vote-frontend vote-frontend=$ACR_REPO/frontend:${env.BUILD_NUMBER}"
                 }
             }
