@@ -31,8 +31,7 @@ pipeline {
                 ])
                 {
                     sh "docker login $ACR_REPO --username $ACR_USERNAME --password $ACR_PASSWORD"
-                    sh "docker build -t frontend:${env.BUILD_NUMBER} -f ./azure-vote/Dockerfile ."
-                    sh "docker tag frontend:${env.BUILD_NUMBER} $ACR_REPO/frontend:${env.BUILD_NUMBER}"
+                    sh "docker build -t frontend:${env.BUILD_NUMBER} --tag $ACR_REPO/frontend:${env.BUILD_NUMBER} -f ./azure-vote/Dockerfile ."
                     sh "docker push $ACR_REPO/frontend:${env.BUILD_NUMBER}"
                 }
             }
