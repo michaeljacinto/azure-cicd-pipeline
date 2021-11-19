@@ -6,9 +6,9 @@ pipeline {
                 sh "echo 'Build success'"
             }
         }
-        stage('Test') {
+        stage('Qualitcy Check') {
             steps {
-                sh "echo 'Test success'"
+                sh 'pylint-fail-under --fail_under 5.0 *.py'
             }
         }
         stage('Authenticate') {
@@ -31,8 +31,8 @@ pipeline {
                 ])
                 {
                     sh "docker login $ACR_REPO --username $ACR_USERNAME --password $ACR_PASSWORD"
-                    sh "docker build -t frontend:${env.BUILD_NUMBER} --tag $ACR_REPO/frontend:${env.BUILD_NUMBER} -f ./azure-vote/Dockerfile ."
-                    sh "docker push $ACR_REPO/frontend:${env.BUILD_NUMBER}"
+                    sh "docker build -t frontend:v${env.BUILD_NUMBER} --tag $ACR_REPO/frontend:v${env.BUILD_NUMBER} -f ./azure-vote/Dockerfile ."
+                    sh "docker push $ACR_REPO/frontend:v${env.BUILD_NUMBER}"
                 }
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                 ])
                 {
                     sh "az aks get-credentials --resource-group $RG_NAME --name $AKS_NAME"
-                    sh "kubectl set image deployment.apps/vote-frontend vote-frontend=$ACR_REPO/frontend:${env.BUILD_NUMBER}"
+                    sh "kubectl set image deployment.apps/vote-frontend vote-frontend=$ACR_REPO/frontend:v${env.BUILD_NUMBER}"
                 }
             }
         }
