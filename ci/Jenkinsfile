@@ -3,10 +3,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "echo 'Build success'"
+                sh 'pip install -r requirements.txt'
             }
         }
-        stage('Qualitcy Check') {
+        stage('Quality Check') {
             steps {
                 sh 'pylint-fail-under --fail_under 5.0 azure-vote/azure-vote/*.py'
             }

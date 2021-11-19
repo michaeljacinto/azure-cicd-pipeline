@@ -1,6 +1,6 @@
 import os
-import redis
 import socket
+import redis
 
 from flask import Flask, request, render_template
 
