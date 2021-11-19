@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Qualitcy Check') {
             steps {
-                sh 'pylint-fail-under --fail_under 5.0 *.py'
+                sh 'pylint-fail-under --fail_under 5.0 azure-vote/azure-vote/*.py'
             }
         }
         stage('Authenticate') {
