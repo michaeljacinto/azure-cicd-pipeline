@@ -27,6 +27,7 @@ else:
 # Redis configurations
 redis_server = os.environ['REDIS']
 
+title2 = app.config['TITLE']
 # Redis Connection
 try:
     if "REDIS_PWD" in os.environ:
@@ -59,7 +60,7 @@ def index():
         vote2 = r.get(button2).decode('utf-8')
 
         # Return index with values
-        return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
+        return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title, title2=title2)
 
     elif request.method == 'POST':
         if request.form['vote'] == 'reset':
@@ -68,7 +69,7 @@ def index():
             r.set(button2, 0)
             vote1 = r.get(button1).decode('utf-8')
             vote2 = r.get(button2).decode('utf-8')
-            return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
+            return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title, title2=title2)
 
         else:
             # Insert vote result into DB
@@ -80,7 +81,7 @@ def index():
             vote2 = r.get(button2).decode('utf-8')
 
             # Return results
-            return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
+            return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title, title2=title2)
 
 
 if __name__ == "__main__":
