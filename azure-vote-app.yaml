@@ -46,7 +46,7 @@ spec:
   strategy:
     rollingUpdate:
       maxSurge: 1
-      maxUnavailable: 1
+      maxUnavailable: 0
   minReadySeconds: 5
   template:
     metadata:
@@ -57,7 +57,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
         - name: vote-frontend
-          image: michaeljacinto/voting_app:latest
+          image: mj3495.azurecr.io/frontend:v21
           ports:
             - containerPort: 80
           resources:
